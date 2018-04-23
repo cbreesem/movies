@@ -1,0 +1,7 @@
+.scrapy/
+
+Movies/__pycache__/
+Movies/spiders/__pycache__/
+
+*.pyc
+*.pyd
