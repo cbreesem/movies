@@ -37,15 +37,16 @@ class YupTorrents(scrapy.Spider):
     def getPage(self,response):
         url = response.url
         html = BeautifulSoup(response.body,'html.parser')
+
+        links = html.findAll('div',{'class':'col-md-2 item top-padding'})
+        for i in links:
+            uri = i.find('a').get('href')
+            if uri not in self.urls: yield Request(url=uri, callback=self.getInfo)
+
         count = html.find('li',{'class':'page_info'})
-        if count is None:
-            links = html.findAll('div',{'class':'col-md-2 item top-padding'})
-            for i in links:
-                uri = i.find('a').get('href')
-                if uri not in self.urls: yield Request(url=uri, callback=self.getInfo)
-        else:
+        if count is not None:
             count = int(count.getText().split()[-1])
-            for i in range(1,count+1):
+            for i in range(2,count+1):
                 yield Request(url='%s&page=%d' % (url,i), callback=self.getLinks)
                 # break
 

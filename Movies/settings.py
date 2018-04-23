@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'Movies.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0'
+USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -105,8 +105,16 @@ path = 'E:/Movies/'
 headers = {
         'accept': 'image/webp,image/*,*/*;q=0.8',
         'accept-encoding': 'gzip, deflate, sdch, br',
+        'accept-Language': 'en',
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36',
     }
+DEFAULT_REQUEST_HEADERS = {
+  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'Accept-Language': 'en',
+  'USER-AGENT': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
+}
+
+
 
 HTTPERROR_ALLOWED_CODES = [404]
 RETRY_HTTP_CODES = [500, 502, 503, 504, 400, 403, 404, 408]
