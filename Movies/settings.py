@@ -109,3 +109,14 @@ headers = {
     }
 
 HTTPERROR_ALLOWED_CODES = [404]
+RETRY_HTTP_CODES = [500, 502, 503, 504, 400, 403, 404, 408]
+
+LOG_FILE = 'debug.log'
+
+# CRITICAL - 严重错误(critical)
+# ERROR - 一般错误(regular errors)
+# WARNING - 警告信息(warning messages)
+# INFO - 一般信息(informational messages)
+# DEBUG - 调试信息(debugging messages)
+
+LOG_LEVEL = "DEBUG"

@@ -5,3 +5,5 @@ Movies/spiders/__pycache__/
 
 *.pyc
 *.pyd
+
+debug.log

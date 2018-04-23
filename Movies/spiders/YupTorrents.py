@@ -38,10 +38,16 @@ class YupTorrents(scrapy.Spider):
         url = response.url
         html = BeautifulSoup(response.body,'html.parser')
         count = html.find('li',{'class':'page_info'})
-        count = int(count.getText().split()[-1])
-        for i in range(1,count+1):
-            yield Request(url='%s&page=%d' % (url,i), callback=self.getLinks)
-            # break
+        if count is None:
+            links = html.findAll('div',{'class':'col-md-2 item top-padding'})
+            for i in links:
+                uri = i.find('a').get('href')
+                if uri not in self.urls: yield Request(url=uri, callback=self.getInfo)
+        else:
+            count = int(count.getText().split()[-1])
+            for i in range(1,count+1):
+                yield Request(url='%s&page=%d' % (url,i), callback=self.getLinks)
+                # break
 
     def getLinks(self,response):
         html = BeautifulSoup(response.body,'html.parser')
@@ -71,52 +77,54 @@ class YupTorrents(scrapy.Spider):
         fields['res'] = []
 
         downTable = html.find('table',{'class':'table table-striped table-hover'})
-        mainbody = downTable.findAll('td')
-        for i in range(0,len(mainbody),6):
 
-            links = dict()
-            label = []
-            fileName = mainbody[i].getText().strip()
-            if re.search(r'4k|4K', fileName): label.append('4K')
-            if re.search(r'1080p|1080P', fileName): label.append('1080P')
-            if re.search(r'720p|720P', fileName): label.append('720P')
-            if re.search(r'480p|480P', fileName): label.append('480P')
-            if re.search(r'aac|AAC', fileName): label.append('AAC')
-            if re.search(r'avc|AVC', fileName): label.append('AVC')
-            if re.search(r'dts|DTS', fileName): label.append('DTS')
-            if re.search(r'3d|3D', fileName): label.append('3D')
-            if re.search(r'ac3|AC3', fileName): label.append('AC3')
-            if re.search(r'REMUX|Remux|remux', fileName): label.append('REMUX')
-            if re.search(r'iso|ISO', fileName): label.append('原盘')
-            if re.search(r'dvdrip|DVDRip', fileName): label.append('DVDRip')
-            if re.search(r'cam|CAM', fileName): label.append('CAM')
-            if re.search(r'web-dl|WEB-DL', fileName):label.append('WEB-DL')
-            if re.search(r'webdl|WEBDL', fileName):label.append('WEBDL')
-            if re.search(r'webrip|WEBRip', fileName):label.append('WEBRip')
-            if re.search(r'Screener', fileName):label.append('Screener')
-            if re.search(r'brrip|BRRip', fileName):label.append('BRRip')
-            if re.search(r'dvdscr|DVDScr', fileName):label.append('DVDScr')
-            if re.search(r'hdrip|HDRip', fileName):label.append('HDRip')
-            if re.search(r'ts|TS', fileName): label.append('TS')
-            if re.search(r'hdts|HDTS', fileName): label.append('HDTS')
-            if re.search(r'hdcam|HDCAM', fileName): label.append('HDCAM')
-            if re.search(r'hd-ts|HD-TS', fileName): label.append('HD-TS')
-            if re.search(r'bluray|BluRay', fileName): label.append('BluRay')
-            if re.search(r'bdrip|BDRip', fileName): label.append('BDRip')
+        if downTable is not None:
+            mainbody = downTable.findAll('td')
+            for i in range(0,len(mainbody),6):
 
-            links['resource'] = fileName
-            links['size'] = ''.join(mainbody[i+1].getText().split())
-            links['btlink'] = self.domain + mainbody[i+4].find('a').get('href')
-            links['malink'] = mainbody[i+5].find('a').get('href')
-            links['label'] = label
+                links = dict()
+                label = []
+                fileName = mainbody[i].getText().strip()
+                if re.search(r'4k|4K', fileName): label.append('4K')
+                if re.search(r'1080p|1080P', fileName): label.append('1080P')
+                if re.search(r'720p|720P', fileName): label.append('720P')
+                if re.search(r'480p|480P', fileName): label.append('480P')
+                if re.search(r'aac|AAC', fileName): label.append('AAC')
+                if re.search(r'avc|AVC', fileName): label.append('AVC')
+                if re.search(r'dts|DTS', fileName): label.append('DTS')
+                if re.search(r'3d|3D', fileName): label.append('3D')
+                if re.search(r'ac3|AC3', fileName): label.append('AC3')
+                if re.search(r'REMUX|Remux|remux', fileName): label.append('REMUX')
+                if re.search(r'iso|ISO', fileName): label.append('原盘')
+                if re.search(r'dvdrip|DVDRip', fileName): label.append('DVDRip')
+                if re.search(r'cam|CAM', fileName): label.append('CAM')
+                if re.search(r'web-dl|WEB-DL', fileName):label.append('WEB-DL')
+                if re.search(r'webdl|WEBDL', fileName):label.append('WEBDL')
+                if re.search(r'webrip|WEBRip', fileName):label.append('WEBRip')
+                if re.search(r'Screener', fileName):label.append('Screener')
+                if re.search(r'brrip|BRRip', fileName):label.append('BRRip')
+                if re.search(r'dvdscr|DVDScr', fileName):label.append('DVDScr')
+                if re.search(r'hdrip|HDRip', fileName):label.append('HDRip')
+                if re.search(r'ts|TS', fileName): label.append('TS')
+                if re.search(r'hdts|HDTS', fileName): label.append('HDTS')
+                if re.search(r'hdcam|HDCAM', fileName): label.append('HDCAM')
+                if re.search(r'hd-ts|HD-TS', fileName): label.append('HD-TS')
+                if re.search(r'bluray|BluRay', fileName): label.append('BluRay')
+                if re.search(r'bdrip|BDRip', fileName): label.append('BDRip')
 
-            md5 = hashlib.md5(links['btlink'].encode('utf8')).hexdigest()
+                links['resource'] = fileName
+                links['size'] = ''.join(mainbody[i+1].getText().split())
+                links['btlink'] = self.domain + mainbody[i+4].find('a').get('href')
+                links['malink'] = mainbody[i+5].find('a').get('href')
+                links['label'] = label
 
-            links['filename'] = '%s/%s/%s/%s.torrent' % (path,'Torrent',self.name,md5)
+                md5 = hashlib.md5(links['btlink'].encode('utf8')).hexdigest()
 
-            fields['res'].append(links)
+                links['filename'] = '%s/%s.torrent' % (self.name,md5)
 
-            yield Request(url=links['btlink'], callback=self.getTorrent)
+                fields['res'].append(links)
+
+                yield Request(url=links['btlink'], callback=self.getTorrent)
 
         yield fields
         yield Request(url=fields['poster'], callback=self.getPoster)
@@ -124,6 +132,7 @@ class YupTorrents(scrapy.Spider):
     def getPoster(self, response):
 
         imgPath = '%s/%s' % (path,'Picture')
+        if not os.path.exists(path): os.mkdir(path)
         if not os.path.exists(imgPath): os.mkdir(imgPath)
         imgPath = '%s/%s' % (imgPath,self.name)
         if not os.path.exists(imgPath): os.mkdir(imgPath)
@@ -136,6 +145,7 @@ class YupTorrents(scrapy.Spider):
     def getTorrent(self, response):
 
         torPath = '%s/%s' % (path,'Torrent')
+        if not os.path.exists(path): os.mkdir(path)
         if not os.path.exists(torPath): os.mkdir(torPath)
         torPath = '%s/%s' % (torPath,self.name)
         if not os.path.exists(torPath): os.mkdir(torPath)

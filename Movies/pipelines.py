@@ -40,7 +40,7 @@ class YupPipeline(object):
         data = dict(
             site = item['site'],
             resource = item['poster'],
-            filename = '%s/%s/%s/%s.jpg' % (path,'Picture',item['site'],fileName),
+            filename = '%s/%s.jpg' % (item['site'],fileName),
             type = 'poster',
             mid = mid,
             classes = 'resource'
